@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentor Chat</title>
+    <style>
+        /* Styles for mentor chat */
+    </style>
+</head>
+<body>
+    <h1>Mentor Chat</h1>
+    <div id="chat-log"></div>
+    <input type="text" id="message-input" placeholder="Enter your message">
+    <button onclick="sendMessage('mentor')">Send</button>
+    <button onclick="clearChat()">Clear Chat</button>
+    <script>
+        async function sendMessage(role) {
+            const messageInput = document.getElementById('message-input');
+            const message = messageInput.value;
+            messageInput.value = '';
+            await fetch('/send_message', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ role, message })
+            });
+            updateChat();
+        }
+
+        async function updateChat() {
+            const response = await fetch('/get_messages');
+            const chatLog = await response.json();
+            const chatLogDiv = document.getElementById('chat-log');
+            chatLogDiv.innerHTML = chatLog.map(msg => `<p><strong>${msg.role}:</strong> ${msg.message} <em>${msg.timestamp}</em></p>`).join('');
+        }
+
+        async function clearChat() {
+            await fetch('/clear_messages', { method: 'POST' });
+            updateChat();
+        }
+
+        setInterval(updateChat, 1000);
+    </script>
+</body>
+</html>

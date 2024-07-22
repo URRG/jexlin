@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluate</title>
+    <style>
+        /* Evaluation interface styles */
+    </style>
+</head>
+<body>
+    <h1>Evaluate Chat</h1>
+    <button onclick="performEvaluation()">Perform Evaluation</button>
+    <div id="evaluation-results"></div>
+    <script>
+        async function performEvaluation() {
+            const response = await fetch('/perform_evaluation');
+            const result = await response.json();
+            const resultsDiv = document.getElementById('evaluation-results');
+            resultsDiv.innerHTML = `<p><strong>Average BLEU Score:</strong> ${result.avg_bleu_score.toFixed(2)}</p>`;
+            resultsDiv.innerHTML += `<p><strong>Average Jaccard Similarity:</strong> ${result.avg_jaccard_similarity.toFixed(2)}</p>`;
+            result.evaluations.forEach((evaluation, index) => {
+                resultsDiv.innerHTML += `<div><h3>Message ${index + 1} (${evaluation.role})</h3>
+                <p>${evaluation.message}</p>
+                <p>Sentiment: ${evaluation.sentiment.label}</p>
+                <p>Grammar Errors: ${evaluation.grammar.errors}</p>
+                <p>Readability Score: ${evaluation.readability.score}</p>
+                <p>Coherence Score: ${evaluation.coherence.coherence_score}</p>
+                <p>Feedback: ${JSON.stringify(evaluation.feedback)}</p>
+                </div>`;
+            });
+        }
+    </script>
+</body>
+</html>
