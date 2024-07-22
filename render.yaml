@@ -3,5 +3,8 @@ services:
     name: chat-app
     env: python
     plan: free
-    buildCommand: "pip install -r requirements.txt"
+    buildCommand: |
+      apt-get update
+      apt-get install -y openjdk-11-jdk
+      pip install -r requirements.txt
     startCommand: "gunicorn app:app"
