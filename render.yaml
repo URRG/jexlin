@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: chat-app
+    env: python
+    plan: free
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn app:app"
